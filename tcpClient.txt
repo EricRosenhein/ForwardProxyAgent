@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <sys/types.h>
+#include <sys/socket.h>
+
+#include <netinet/in.h>
+
+int main(int argc, char **argv)
+{
+	char server_message[4096], client_message[4096];
+	
+	// Create a socket.
+	int network_socket;
+	network_socket(AF_INET, SOCKSTREAM, 0);
+	if (network_socket < 0)
+        printf("Error in client creating\n");
+    else
+        printf("Client Created\n");
+	
+	// Specify an address for the socket.
+	struct sockaddr_in server_address, client_address;
+	server_address.sin_family = AF_NET;
+	server_address.sin_port = htons(60000);
+	server_address.sin_addr.s_addr = INADDR_ANY;
+	
+	// Explicitly assigning port 60001 to client
+	client_address.sin_family = AF_NET;
+	client_address.sin_port = htons(60001);
+	client_address.sin_addr.s_addr = INADDR_ANY;
+	
+	if (bind(network_socket, (struct sockaddr*) &client_address, sizeof(struct sockaddr_in)) == 0)
+		printf("Bound correctly.\n\n");
+	else
+		printf("Unable to bind\n\n");
+	
+	
+	int connection_status = connect(network_socket, (struct sockaddr *) &server_address, sizeof(server_address));
+	// Check for eror with the connection.
+	if (connection_status == 0)
+		printf("Client connected.");
+	else
+		printf("There was an error making a connection to the remote socket \n\n);
+	
+	send(network_socket, client_message, 4096, 0);
+	
+	// Recieve data from the server.
+	char server_response[4096];
+	recv(network_socket, &server_response, sizeof(server_response), 0);
+	
+	// Print out the server's response
+	printf("The server sent the data: %s", server_response);
+	
+	File *outputFile = fopen("output.txt", "w");
+	fprintf(outputFile, server_message);
+	// and close the socket.
+	close(network_socket);
+	
+	return 0;
+}
+

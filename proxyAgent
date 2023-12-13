@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <sys/types.h>
+#include <sys/socket.h>
+
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+
+// Retrieves the requested page
+void http_helper(char* response[], char command_string[])
+{
+	struct hostent *ghbn=gethostbyname(command_string);
+	char *address = inet_ntoa(pHostInfo->h_addr);
+
+	char *address;
+	address = command_string[];
+	
+	int client_socket;
+	client_socket = socket(AF_INET, SOCK_STREAM, 0);
+	
+	// Connect to a address.
+	struct sockaddr_in remote_address;
+	remote_address.sin_family = AF_INET;
+	remote_address.sin_port = htons(80);
+	inet_aton(address, &remote_address.sin_addr.s_addr);
+	
+	
+	connect(client_socket, (struct sockaddr *) &remote_address, sizeof(remote_address));
+	
+	car request[] = "GET / HTTP/1.1\r\n\r\n";
+	
+	send(client_socket, request, sizeof(request), 0);
+	
+	revc(client_socket, &response, sizeof(response), 0);
+	
+	close(client_socket);
+	
+}
+
+
+// Main program
+int main()
+{
+	char server_message[4096], client_message[4096];
+
+	// Create a socket.
+	int server_socket;
+	server_socket(AF_INET, SOCKSTREAM, 0);
+	if (server_socket < 0)
+		printf("Error in server creation!\n\n");
+	else
+		printf("Server created.");
+	
+	// Specify an address for the socket.
+	struct sockaddr_in server_address, client_addr;
+	server_address.sin_family = AF_NET;
+	server_address.sin_port = htons(60000);
+	server_address.sin_addr.s_addr = INADDR_ANY;
+	
+	// Bind the socket to our specified IP and port.
+	if (bind(server_socket, (struct sockaddr *) &server_address, sizeof(server_address) ==0))
+		printf("Bound correctly.\n\n");
+	else
+		printf("Unable to bind\n\n");
+		
+	if (listen(server_socket, 3) == 0)
+		printf(Listening...\n\n);
+	else
+		printf("Unable to listen!\n\n");
+	
+    socklen_t addr_size;
+    addr_size = sizeof(struct sockaddr_in);
+     
+    // Ip character array will store the ip address of client
+    char *ip;
+     
+    // while loop is iterated infinitely to 
+    // accept infinite connection one by one
+    while (1)
+    {
+        int acc = accept(server, (struct sockaddr*) &client_addr, &addr_size);
+        printf("Connection Established\n");
+        char ip[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(client_addr.sin_addr), ip, INET_ADDRSTRLEN);
+     
+        // "ntohs(client_addr.sin_port)" function is 
+        // for finding port number of client
+        printf("connection established with PORT : %d\n", ntohs(client_addr.sin_port));
+ 
+        recv(acc, client_message, 4096, 0);
+		
+		http_helper(&server_message, client_message);
+		char header[] = "GET / HTTP/1.1\r\n\r\n";
+		
+		
+        printf("Client : %s\n", client_message);
+        
+        send(acc, server_message, 4096, 0);
+    } 
+    return 0;
+}
+
+
+
